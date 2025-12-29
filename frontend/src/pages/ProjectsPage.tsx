@@ -156,7 +156,7 @@ const ProjectsPage: React.FC = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-4 py-3 border border-[#1b263b] rounded-lg focus:ring-2 focus:ring-[#3b6ea5] focus:border-transparent"
               >
-                {categories && categories.map((category: string) => (
+                {categories && categories.filter((cat): cat is string => !!cat).map((category) => (
                   <option key={category} value={category}>
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </option>
