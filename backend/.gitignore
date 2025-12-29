@@ -1,0 +1,8 @@
+node_modules/
+# Environment variables - NEVER commit sensitive data
+.env
+.env.local
+.env.*.local
+# Dev scripts with sensitive logic
+seedAdmin.js
+uploads/*
