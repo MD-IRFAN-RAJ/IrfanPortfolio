@@ -906,20 +906,20 @@ const AdminDashboard: React.FC = () => {
                     ) : (
                       <>
                         <h4 className="font-semibold text-gray-100">
-                          {'title' in item ? item.title : 'name' in item ? item.name : 'company' in item ? item.company : 'N/A'}
+                          {('title' in item ? (item as any).title : 'name' in item ? (item as any).name : 'company' in item ? (item as any).company : 'N/A') as string}
                         </h4>
                         <p className="text-gray-400 text-sm mt-1">
-                          {('summary' in item ? item.summary : '') || 
-                           ('description' in item ? item.description : '') || 
-                           ('issuer' in item ? item.issuer : '') || 
-                           ('organizer' in item ? item.organizer : '') || 
-                           ('position' in item ? item.position : '')}
+                          {(('summary' in item ? (item as any).summary : '') || 
+                           ('description' in item ? (item as any).description : '') || 
+                           ('issuer' in item ? (item as any).issuer : '') || 
+                           ('organizer' in item ? (item as any).organizer : '') || 
+                           ('position' in item ? (item as any).position : '')) as string}
                         </p>
                         <div className="text-xs text-gray-500 mt-2">
-                          {'issueDate' in item && item.issueDate && `Issued: ${new Date(item.issueDate).toLocaleDateString()}`}
-                          {'visitDate' in item && item.visitDate && `Visited: ${new Date(item.visitDate).toLocaleDateString()}`}
-                          {'date' in item && item.date && `Date: ${new Date(item.date).toLocaleDateString()}`}
-                          {'startDate' in item && item.startDate && `Duration: ${new Date(item.startDate).toLocaleDateString()} - ${new Date((item as any).endDate).toLocaleDateString()}`}
+                          {('issueDate' in item && (item as any).issueDate && `Issued: ${new Date((item as any).issueDate).toLocaleDateString()}`) || ''}
+                          {('visitDate' in item && (item as any).visitDate && `Visited: ${new Date((item as any).visitDate).toLocaleDateString()}`) || ''}
+                          {('date' in item && (item as any).date && `Date: ${new Date((item as any).date).toLocaleDateString()}`) || ''}
+                          {('startDate' in item && (item as any).startDate && `Duration: ${new Date((item as any).startDate).toLocaleDateString()} - ${new Date((item as any).endDate).toLocaleDateString()}`) || ''}
                         </div>
                       </>
                     )}
