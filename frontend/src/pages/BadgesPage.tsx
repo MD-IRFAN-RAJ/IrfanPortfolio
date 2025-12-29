@@ -65,9 +65,7 @@ const BadgesPage: React.FC = () => {
     if (searchTerm) {
       filtered = filtered.filter(badge =>
         badge.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        badge.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        badge.issuer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        badge.skill.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
+        badge.issuer.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 

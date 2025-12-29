@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { FaBriefcase, FaCalendar, FaMapMarkerAlt, FaUsers, FaStar, FaSearch, FaFilter, FaExternalLinkAlt, FaBuilding, FaLaptopCode, FaChartLine, FaGraduationCap, FaTimes, FaCertificate } from 'react-icons/fa'
+import { FaBriefcase, FaCalendar, FaMapMarkerAlt, FaUsers, FaStar, FaSearch, FaFilter, FaExternalLinkAlt, FaLaptopCode, FaChartLine, FaGraduationCap, FaTimes, FaCertificate } from 'react-icons/fa'
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger)

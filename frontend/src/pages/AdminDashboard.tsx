@@ -898,20 +898,28 @@ const AdminDashboard: React.FC = () => {
               ) : (
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    {activeTab === 'certificates' && item.image ? (
+                    {activeTab === 'certificates' && 'image' in item && item.image ? (
                       <div className="space-y-2">
                         <img src={item.image} alt="Certificate" className="w-full h-auto rounded-lg border border-gray-700" />
-                        <p className="text-xs text-gray-500">Added: {new Date(item.createdAt).toLocaleDateString()}</p>
+                        <p className="text-xs text-gray-500">Added: {'createdAt' in item ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}</p>
                       </div>
                     ) : (
                       <>
-                        <h4 className="font-semibold text-gray-100">{item.title || item.name || item.company}</h4>
-                        <p className="text-gray-400 text-sm mt-1">{item.summary || item.description || item.issuer || item.organizer || item.position}</p>
+                        <h4 className="font-semibold text-gray-100">
+                          {'title' in item ? item.title : 'name' in item ? item.name : 'company' in item ? item.company : 'N/A'}
+                        </h4>
+                        <p className="text-gray-400 text-sm mt-1">
+                          {('summary' in item ? item.summary : '') || 
+                           ('description' in item ? item.description : '') || 
+                           ('issuer' in item ? item.issuer : '') || 
+                           ('organizer' in item ? item.organizer : '') || 
+                           ('position' in item ? item.position : '')}
+                        </p>
                         <div className="text-xs text-gray-500 mt-2">
-                          {item.issueDate && `Issued: ${new Date(item.issueDate).toLocaleDateString()}`}
-                          {item.visitDate && `Visited: ${new Date(item.visitDate).toLocaleDateString()}`}
-                          {item.date && `Date: ${new Date(item.date).toLocaleDateString()}`}
-                          {item.startDate && `Duration: ${new Date(item.startDate).toLocaleDateString()} - ${new Date(item.endDate).toLocaleDateString()}`}
+                          {'issueDate' in item && item.issueDate && `Issued: ${new Date(item.issueDate).toLocaleDateString()}`}
+                          {'visitDate' in item && item.visitDate && `Visited: ${new Date(item.visitDate).toLocaleDateString()}`}
+                          {'date' in item && item.date && `Date: ${new Date(item.date).toLocaleDateString()}`}
+                          {'startDate' in item && item.startDate && `Duration: ${new Date(item.startDate).toLocaleDateString()} - ${new Date((item as any).endDate).toLocaleDateString()}`}
                         </div>
                       </>
                     )}
@@ -919,9 +927,9 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex gap-2 ml-4">
                     <button 
                       onClick={() => {
-                        if (activeTab === 'projects') handleEditProject(item)
-                        else if (activeTab === 'certificates') handleEditCertificate(item)
-                        else if (activeTab === 'internships') handleEditInternship(item)
+                        if (activeTab === 'projects') handleEditProject(item as any)
+                        else if (activeTab === 'certificates') handleEditCertificate(item as any)
+                        else if (activeTab === 'internships') handleEditInternship(item as any)
                       }} 
                       className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors"
                     >
