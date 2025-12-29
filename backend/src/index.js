@@ -33,7 +33,6 @@ async function start() {
   try {
     await mongoose.connect(uri)
     console.log('Connected to MongoDB')
-    app.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
   } catch (err) {
     console.error('Failed to connect to MongoDB', err)
     process.exit(1)
