@@ -3,6 +3,7 @@ const Internship = require('../models/Internship')
 const { requireAuth } = require('../middleware/auth')
 const multer = require('multer')
 const { uploadBuffer } = require('../utils/cloudinary')
+const path = require('path')
 
 const router = express.Router()
 
@@ -63,11 +64,19 @@ router.post('/', requireAuth, upload.single('certificate'), async (req, res) => 
       return res.status(400).json({ message: 'Missing required fields' })
     }
 
-    // Handle certificate file upload
+    const isPdf = req.file?.mimetype === 'application/pdf'
+    const ext = req.file ? path.extname(req.file.originalname || '') : ''
+    const format = isPdf ? 'pdf' : ext ? ext.replace('.', '') : undefined
+    const baseName = req.file ? path.basename(req.file.originalname || 'certificate', ext) : 'certificate'
+    const publicId = req.file ? `${baseName}-${Date.now()}` : undefined
+
+    // Handle certificate file upload (Cloudinary)
     const certificateUrl = req.file
       ? await uploadBuffer(req.file.buffer, { 
           folder: `${cloudFolder}/internships`,
-          resourceType: req.file.mimetype === 'application/pdf' ? 'raw' : 'image'
+          resourceType: isPdf ? 'raw' : 'image',
+          format,
+          publicId
         })
       : null
 
@@ -136,11 +145,19 @@ router.put('/:id', requireAuth, upload.single('certificate'), async (req, res) =
       impact
     } = req.body
 
+    const isPdf = req.file?.mimetype === 'application/pdf'
+    const ext = req.file ? path.extname(req.file.originalname || '') : ''
+    const format = isPdf ? 'pdf' : ext ? ext.replace('.', '') : undefined
+    const baseName = req.file ? path.basename(req.file.originalname || 'certificate', ext) : 'certificate'
+    const publicId = req.file ? `${baseName}-${Date.now()}` : undefined
+
     // Handle certificate file upload
     const certificateUrl = req.file
       ? await uploadBuffer(req.file.buffer, { 
           folder: `${cloudFolder}/internships`,
-          resourceType: req.file.mimetype === 'application/pdf' ? 'raw' : 'image'
+          resourceType: isPdf ? 'raw' : 'image',
+          format,
+          publicId
         })
       : undefined
 
