@@ -2,7 +2,7 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { FaAward, FaExternalLinkAlt, FaSync, FaSearch } from 'react-icons/fa'
-import API_ENDPOINTS from '../config/api'
+import API_ENDPOINTS, { getImageUrl } from '../config/api'
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger)
@@ -221,7 +221,7 @@ const BadgesPage: React.FC = () => {
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-16 h-16 rounded-2xl overflow-hidden bg-gray-900 flex items-center justify-center">
                       <img
-                        src={badge.imageUrl}
+                        src={getImageUrl(badge.imageUrl)}
                         alt={badge.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {

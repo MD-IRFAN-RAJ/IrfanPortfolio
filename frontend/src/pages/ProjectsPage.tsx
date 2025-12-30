@@ -8,7 +8,7 @@ import {
   FaSearch,
   FaFilter,
 } from 'react-icons/fa'
-import API_ENDPOINTS from '../config/api'
+import API_ENDPOINTS, { getImageUrl } from '../config/api'
 
 type Project = {
   _id: string
@@ -214,7 +214,7 @@ const ProjectsPage: React.FC = () => {
                 <div className="h-48 bg-gradient-to-br from-[#2c5282] to-[#1e3a5f] flex items-center justify-center">
                   {project.images?.[0] ? (
                     <img
-                      src={project.images[0]}
+                      src={getImageUrl(project.images[0])}
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                     />

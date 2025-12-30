@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaSignOutAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaProjectDiagram, FaCertificate, FaAward, FaBriefcase } from 'react-icons/fa'
-import API_ENDPOINTS from '../config/api'
+import API_ENDPOINTS, { getImageUrl } from '../config/api'
 
 type Project = { _id: string; title: string; summary?: string; images?: string[]; technologies?: string[]; repoLink?: string; liveLink?: string; imageUrl?: string }
 type Certificate = { _id: string; image: string; createdAt: string }
@@ -901,7 +901,7 @@ const AdminDashboard: React.FC = () => {
                   <div className="flex-1">
                     {activeTab === 'certificates' && 'image' in item && item.image ? (
                       <div className="space-y-2">
-                        <img src={item.image} alt="Certificate" className="w-full h-auto rounded-lg border border-gray-700" />
+                        <img src={getImageUrl(item.image)} alt="Certificate" className="w-full h-auto rounded-lg border border-gray-700" />
                         <p className="text-xs text-gray-500">Added: {'createdAt' in item ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}</p>
                       </div>
                     ) : (

@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { FaCertificate, FaDownload } from 'react-icons/fa'
-import API_ENDPOINTS from '../config/api'
+import API_ENDPOINTS, { getImageUrl } from '../config/api'
 
 type Certificate = {
   _id: string
@@ -103,7 +103,7 @@ const CertificatesPage: React.FC = () => {
                   onClick={() => setSelectedImage(certificate.image)}
                 >
                   <img
-                    src={certificate.image}
+                    src={getImageUrl(certificate.image)}
                     alt="Certificate"
                     className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -117,7 +117,7 @@ const CertificatesPage: React.FC = () => {
                 {/* Download Button */}
                 <div className="p-4 flex justify-center">
                   <a
-                    href={certificate.image}
+                    href={getImageUrl(certificate.image)}
                     download
                     className="flex items-center gap-2 bg-[#3b6ea5] text-white px-4 py-2 hover:bg-[#2c5282] transition-colors"
                   >
@@ -152,7 +152,7 @@ const CertificatesPage: React.FC = () => {
             </button>
             <div className="flex justify-center">
               <img
-                src={selectedImage}
+                src={getImageUrl(selectedImage || '')}
                 alt="Certificate Full Size"
                 className="max-h-[80vh] w-auto object-contain shadow-2xl"
                 onClick={(e) => e.stopPropagation()}

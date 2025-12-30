@@ -24,6 +24,17 @@ export const API_ENDPOINTS = {
   INTERNSHIP_BY_ID: (id: string) => `${API_BASE_URL}/api/internships/${id}`,
 }
 
+// Helper function to get full image URL
+export const getImageUrl = (path: string | undefined): string => {
+  if (!path) return ''
+  // If path already starts with http, return as is
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path
+  }
+  // Otherwise prepend the backend URL
+  return `${API_BASE_URL}${path.startsWith('/') ? path : '/' + path}`
+}
+
 // Export the base URL for use in other files
 export { API_BASE_URL }
 
