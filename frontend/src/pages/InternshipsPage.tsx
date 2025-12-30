@@ -31,12 +31,6 @@ type Internship = {
   impact: string
 }
 
-const isPdf = (url?: string) => !!url && url.toLowerCase().endsWith('.pdf')
-const getCertificateViewerUrl = (url: string) =>
-  isPdf(url)
-    ? `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(url)}`
-    : url
-
 const InternshipsPage: React.FC = () => {
   const [internships, setInternships] = useState<Internship[]>([])
   const [loading, setLoading] = useState(true)
@@ -407,7 +401,7 @@ const InternshipsPage: React.FC = () => {
                   {internship.certificateUrl && (
                     <div className="pt-4 border-t border-[#1b263b]">
                       <a
-                        href={getCertificateViewerUrl(internship.certificateUrl)}
+                        href={internship.certificateUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
@@ -579,7 +573,7 @@ const InternshipsPage: React.FC = () => {
                     <div className="mb-8">
                       <h3 className="text-xl font-bold text-white mb-4">Certificate/Completion Letter</h3>
                       <div className="bg-[#0d1b2a] rounded-2xl p-4 border border-[#1b263b]">
-                        {isPdf(selectedInternship.certificateUrl) ? (
+                        {selectedInternship.certificateUrl.endsWith('.pdf') ? (
                           <div className="flex items-center justify-between bg-[#1b263b] p-4 rounded-xl">
                             <div className="flex items-center gap-3">
                               <div className="text-4xl">📄</div>
@@ -589,7 +583,7 @@ const InternshipsPage: React.FC = () => {
                               </div>
                             </div>
                             <a
-                              href={getCertificateViewerUrl(selectedInternship.certificateUrl)}
+                              href={selectedInternship.certificateUrl}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="bg-[#1e3a5f] text-white px-4 py-2 rounded-lg hover:bg-[#2c5282] transition-colors flex items-center gap-2"
