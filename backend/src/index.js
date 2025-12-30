@@ -20,23 +20,51 @@ app.use(express.json())
 // serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK',
+    mongoConnected: mongoConnected,
+    timestamp: new Date().toISOString()
+  })
+})
+
 app.use('/api/auth', authRoutes)
 app.use('/api/projects', projectRoutes)
 app.use('/api/internships', internshipRoutes)
 app.use('/api/certificates', certificateRoutes)
 app.use('/api/badges', badgeRoutes)
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err)
+  res.status(err.status || 500).json({ 
+    message: err.message || 'Internal server error',
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  })
+})
+
 const PORT = process.env.PORT || 5000
+
+let mongoConnected = false
 
 async function start() {
   const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/portfolio'
   try {
     await mongoose.connect(uri)
     console.log('Connected to MongoDB')
+    mongoConnected = true
   } catch (err) {
     console.error('Failed to connect to MongoDB', err)
-    process.exit(1)
+    mongoConnected = false
   }
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+    if (!mongoConnected) {
+      console.warn('⚠️ WARNING: MongoDB is not connected. Database operations will fail.')
+    }
+  })
 }
 
 start()
