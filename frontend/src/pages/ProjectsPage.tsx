@@ -8,6 +8,7 @@ import {
   FaSearch,
   FaFilter,
 } from 'react-icons/fa'
+import API_ENDPOINTS from '../config/api'
 
 type Project = {
   _id: string
@@ -52,7 +53,7 @@ const ProjectsPage: React.FC = () => {
   async function fetchProjects() {
     try {
       setLoading(true)
-      const res = await fetch('/api/projects')
+      const res = await fetch(API_ENDPOINTS.PROJECTS)
       const data: Project[] = await res.json()
       setProjects(data)
     } catch (err) {

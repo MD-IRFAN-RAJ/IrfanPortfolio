@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaSignOutAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaProjectDiagram, FaCertificate, FaAward, FaBriefcase } from 'react-icons/fa'
+import API_ENDPOINTS from '../config/api'
 
 type Project = { _id: string; title: string; summary?: string; images?: string[]; technologies?: string[]; repoLink?: string; liveLink?: string; imageUrl?: string }
 type Certificate = { _id: string; image: string; createdAt: string }
@@ -119,10 +120,10 @@ const AdminDashboard: React.FC = () => {
     setProjectLoading(true)
     try {
       const [projectsRes, certificatesRes, badgesRes, internshipsRes] = await Promise.all([
-        fetch('/api/projects'),
-        fetch('/api/certificates'),
-        fetch('/api/badges'),
-        fetch('/api/internships')
+        fetch(API_ENDPOINTS.PROJECTS),
+        fetch(API_ENDPOINTS.CERTIFICATES),
+        fetch(API_ENDPOINTS.BADGES),
+        fetch(API_ENDPOINTS.INTERNSHIPS)
       ])
 
       if (projectsRes.ok) setProjects(await projectsRes.json())
@@ -158,7 +159,7 @@ const AdminDashboard: React.FC = () => {
       if (projectImageFile) {
         formData.append('images', projectImageFile)
       }
-      const res = await fetch('/api/projects', {
+      const res = await fetch(API_ENDPOINTS.PROJECTS, {
         method: 'POST',
         headers: { Authorization: `Bearer ${t}` },
         body: formData
@@ -207,7 +208,7 @@ const AdminDashboard: React.FC = () => {
       if (editProjectImageFile) {
         formData.append('images', editProjectImageFile)
       }
-      const res = await fetch(`/api/projects/${editingProject}`, {
+      const res = await fetch(API_ENDPOINTS.PROJECT_BY_ID(editingProject), {
         method: 'PUT',
         headers: { Authorization: `Bearer ${t}` },
         body: formData
@@ -228,7 +229,7 @@ const AdminDashboard: React.FC = () => {
     if (!confirm('Delete this project?')) return
     try {
       const t = requireAuthToken()
-      const res = await fetch(`/api/projects/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
+      const res = await fetch(API_ENDPOINTS.PROJECT_BY_ID(id), { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
       if (!res.ok) throw new Error('Delete failed')
       setProjects(prev => prev.filter(p => p._id !== id))
     } catch (err) {
@@ -248,7 +249,7 @@ const AdminDashboard: React.FC = () => {
       const formData = new FormData()
       formData.append('image', certificateImageFile)
       
-      const res = await fetch('/api/certificates', {
+      const res = await fetch(API_ENDPOINTS.CERTIFICATES, {
         method: 'POST',
         headers: { Authorization: `Bearer ${t}` },
         body: formData
@@ -285,7 +286,7 @@ const AdminDashboard: React.FC = () => {
       const formData = new FormData()
       formData.append('image', editCertificateImageFile)
       
-      const res = await fetch(`/api/certificates/${editingCertificate}`, {
+      const res = await fetch(API_ENDPOINTS.CERTIFICATE_BY_ID(editingCertificate), {
         method: 'PUT',
         headers: { Authorization: `Bearer ${t}` },
         body: formData
@@ -306,7 +307,7 @@ const AdminDashboard: React.FC = () => {
     if (!confirm('Delete this certificate?')) return
     try {
       const t = requireAuthToken()
-      const res = await fetch(`/api/certificates/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
+      const res = await fetch(API_ENDPOINTS.CERTIFICATE_BY_ID(id), { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
       if (!res.ok) throw new Error('Delete failed')
       setCertificates(prev => prev.filter(c => c._id !== id))
     } catch (err) {
@@ -326,7 +327,7 @@ const AdminDashboard: React.FC = () => {
       formData.append('credentialUrl', badgeForm.credentialUrl)
       if (badgeImageFile) formData.append('image', badgeImageFile)
 
-      const res = await fetch('/api/badges', {
+      const res = await fetch(API_ENDPOINTS.BADGES, {
         method: 'POST',
         headers: { Authorization: `Bearer ${t}` },
         body: formData
@@ -349,7 +350,7 @@ const AdminDashboard: React.FC = () => {
     if (!confirm('Delete this badge?')) return
     try {
       const t = requireAuthToken()
-      const res = await fetch(`/api/badges/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
+      const res = await fetch(API_ENDPOINTS.BADGE_BY_ID(id), { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
       if (!res.ok) throw new Error('Delete failed')
       setBadges(prev => prev.filter(b => b._id !== id))
     } catch (err) {
@@ -386,7 +387,7 @@ const AdminDashboard: React.FC = () => {
         formData.append('certificate', internshipCertificateFile)
       }
 
-      const res = await fetch('/api/internships', {
+      const res = await fetch(API_ENDPOINTS.INTERNSHIPS, {
         method: 'POST',
         headers: { Authorization: `Bearer ${t}` },
         body: formData
@@ -468,7 +469,7 @@ const AdminDashboard: React.FC = () => {
         formData.append('certificate', editInternshipCertificateFile)
       }
 
-      const res = await fetch(`/api/internships/${editingInternship}`, {
+      const res = await fetch(API_ENDPOINTS.INTERNSHIP_BY_ID(editingInternship), {
         method: 'PUT',
         headers: { Authorization: `Bearer ${t}` },
         body: formData
@@ -491,7 +492,7 @@ const AdminDashboard: React.FC = () => {
     if (!confirm('Delete this internship?')) return
     try {
       const t = requireAuthToken()
-      const res = await fetch(`/api/internships/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
+      const res = await fetch(API_ENDPOINTS.INTERNSHIP_BY_ID(id), { method: 'DELETE', headers: { Authorization: `Bearer ${t}` } })
       if (!res.ok) throw new Error('Delete failed')
       setInternships(prev => prev.filter(i => i._id !== id))
     } catch (err) {

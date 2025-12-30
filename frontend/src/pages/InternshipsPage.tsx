@@ -2,6 +2,7 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { FaBriefcase, FaCalendar, FaMapMarkerAlt, FaUsers, FaStar, FaSearch, FaFilter, FaExternalLinkAlt, FaLaptopCode, FaChartLine, FaGraduationCap, FaTimes, FaCertificate } from 'react-icons/fa'
+import API_ENDPOINTS from '../config/api'
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger)
@@ -53,7 +54,7 @@ const InternshipsPage: React.FC = () => {
   const fetchInternships = async () => {
     try {
       setLoading(true)
-      const res = await fetch('/api/internships')
+      const res = await fetch(API_ENDPOINTS.INTERNSHIPS)
       if (res.ok) {
         const data = await res.json()
         // Map API data to component format

@@ -2,6 +2,7 @@
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { FaAward, FaExternalLinkAlt, FaSync, FaSearch } from 'react-icons/fa'
+import API_ENDPOINTS from '../config/api'
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger)
@@ -43,7 +44,7 @@ const BadgesPage: React.FC = () => {
     try {
       setLoading(true)
       setError(null)
-      const response = await fetch('/api/badges')
+      const response = await fetch(API_ENDPOINTS.BADGES)
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`)
       }

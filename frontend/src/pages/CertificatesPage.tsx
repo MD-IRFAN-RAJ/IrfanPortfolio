@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { FaCertificate, FaDownload } from 'react-icons/fa'
+import API_ENDPOINTS from '../config/api'
 
 type Certificate = {
   _id: string
@@ -20,7 +21,7 @@ const CertificatesPage: React.FC = () => {
   const fetchCertificates = async () => {
     try {
       setLoading(true)
-      const response = await fetch('/api/certificates')
+      const response = await fetch(API_ENDPOINTS.CERTIFICATES)
       const data = await response.json()
       setCertificates(data)
     } catch (error) {
