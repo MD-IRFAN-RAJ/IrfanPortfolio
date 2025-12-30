@@ -6,27 +6,28 @@ const path = require('path')
 
 dotenv.config()
 
-const authRoutes = require('./routes/auth')
-const projectRoutes = require('./routes/projects')
-const internshipRoutes = require('./routes/internships')
-const certificateRoutes = require('./routes/certificates')
-const badgeRoutes = require('./routes/badges')
+const authRoutes = require('../src/routes/auth')
+const projectRoutes = require('../src/routes/projects')
+const internshipRoutes = require('../src/routes/internships')
+const certificateRoutes = require('../src/routes/certificates')
+const badgeRoutes = require('../src/routes/badges')
 
 const app = express()
 
-app.use(cors({ origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173', credentials: true }))
+app.use(cors({ 
+  origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173', 
+  credentials: true 
+}))
 app.use(express.json())
 
 // serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))
 
-let mongoConnected = false
-
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK',
-    mongoConnected: mongoConnected,
+    mongoConnected: mongoose.connection.readyState === 1,
     timestamp: new Date().toISOString()
   })
 })
@@ -46,30 +47,19 @@ app.use((err, req, res, next) => {
   })
 })
 
-const PORT = process.env.PORT || 5000
-
-async function start() {
+// Connect to MongoDB
+const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) return
+  
   const uri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/portfolio'
   try {
     await mongoose.connect(uri)
     console.log('Connected to MongoDB')
-    mongoConnected = true
   } catch (err) {
     console.error('Failed to connect to MongoDB', err)
-    mongoConnected = false
   }
-
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-    if (!mongoConnected) {
-      console.warn('⚠️ WARNING: MongoDB is not connected. Database operations will fail.')
-    }
-  })
 }
 
-// Only start server if not in serverless environment
-if (require.main === module) {
-  start()
-}
+connectDB()
 
 module.exports = app
