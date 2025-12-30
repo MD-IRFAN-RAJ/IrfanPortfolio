@@ -79,9 +79,6 @@ app.use(async (req, res, next) => {
   }
 })
 
-// serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))
-
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 

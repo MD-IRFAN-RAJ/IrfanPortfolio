@@ -1,29 +1,21 @@
 const express = require('express')
-const multer = require('multer')
-const path = require('path')
 const Badge = require('../models/Badge')
 const { requireAuth } = require('../middleware/auth')
+const multer = require('multer')
+const { uploadBuffer } = require('../utils/cloudinary')
 
 const router = express.Router()
 
-// Configure multer for image uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', '..', 'uploads'))
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname)
-    cb(null, Date.now() + '-' + Math.round(Math.random() * 1e9) + ext)
-  }
-})
+// Configure multer for image uploads (memory + Cloudinary)
+const storage = multer.memoryStorage()
+const cloudFolder = process.env.CLOUDINARY_FOLDER || 'portfolio'
 
 const upload = multer({
   storage,
   fileFilter: function (req, file, cb) {
     const allowedTypes = /jpeg|jpg|png|gif|webp|avif/
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase())
     const mimetype = allowedTypes.test(file.mimetype)
-    if (mimetype && extname) {
+    if (mimetype) {
       return cb(null, true)
     }
     cb(new Error('Only image files are allowed'))
@@ -49,7 +41,7 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
       return res.status(400).json({ message: 'Missing required fields' })
     }
 
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null
+    const imageUrl = req.file ? await uploadBuffer(req.file.buffer, { folder: `${cloudFolder}/badges` }) : null
 
     const badge = new Badge({ name, issuer, issueDate, imageUrl, credentialUrl })
 
@@ -67,7 +59,7 @@ router.put('/:id', requireAuth, upload.single('image'), async (req, res) => {
 
     const updateData = { name, issuer, issueDate, credentialUrl }
     if (req.file) {
-      updateData.imageUrl = `/uploads/${req.file.filename}`
+      updateData.imageUrl = await uploadBuffer(req.file.buffer, { folder: `${cloudFolder}/badges` })
     }
 
     const badge = await Badge.findByIdAndUpdate(req.params.id, updateData, { new: true })

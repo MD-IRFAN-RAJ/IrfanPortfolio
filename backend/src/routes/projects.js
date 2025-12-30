@@ -1,22 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const multer = require('multer')
-const path = require('path')
 const Project = require('../models/Project')
 const { requireAuth } = require('../middleware/auth')
+const multer = require('multer')
+const { uploadBuffer } = require('../utils/cloudinary')
 
-// simple disk storage for uploads (dev)
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', '..', 'uploads'))
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname)
-    cb(null, Date.now() + '-' + Math.round(Math.random() * 1e9) + ext)
-  }
-})
-
+// Use in-memory storage; upload to Cloudinary
+const storage = multer.memoryStorage()
 const upload = multer({ storage })
+
+const cloudFolder = process.env.CLOUDINARY_FOLDER || 'portfolio'
 
 // Public: list projects
 router.get('/', async (req, res) => {
@@ -45,7 +38,10 @@ router.get('/:id', async (req, res) => {
 router.post('/', requireAuth, upload.array('images', 6), async (req, res) => {
   try {
     const payload = req.body
-    const images = (req.files || []).map(f => `/uploads/${f.filename}`)
+    const files = req.files || []
+    const images = await Promise.all(files.map(f => uploadBuffer(f.buffer, {
+      folder: `${cloudFolder}/projects`
+    })))
     const projectData = {
       title: payload.title,
       summary: payload.summary || '',
@@ -71,7 +67,10 @@ router.post('/', requireAuth, upload.array('images', 6), async (req, res) => {
 router.put('/:id', requireAuth, upload.array('images', 6), async (req, res) => {
   try {
     const payload = req.body
-    const images = (req.files || []).map(f => `/uploads/${f.filename}`)
+    const files = req.files || []
+    const images = await Promise.all(files.map(f => uploadBuffer(f.buffer, {
+      folder: `${cloudFolder}/projects`
+    })))
     const update = {
       title: payload.title,
       summary: payload.summary || '',

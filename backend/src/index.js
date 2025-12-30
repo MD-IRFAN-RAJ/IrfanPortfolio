@@ -17,9 +17,6 @@ const app = express()
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173', credentials: true }))
 app.use(express.json())
 
-// serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))
-
 let mongoConnected = false
 
 // Health check endpoint

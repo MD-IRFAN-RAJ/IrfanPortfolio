@@ -1,31 +1,23 @@
 const express = require('express')
-const multer = require('multer')
-const path = require('path')
 const Internship = require('../models/Internship')
 const { requireAuth } = require('../middleware/auth')
+const multer = require('multer')
+const { uploadBuffer } = require('../utils/cloudinary')
 
 const router = express.Router()
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', '..', 'uploads'))
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname)
-    cb(null, Date.now() + '-' + Math.round(Math.random() * 1e9) + ext)
-  }
-})
+// Configure multer for file uploads (memory + Cloudinary)
+const storage = multer.memoryStorage()
+const cloudFolder = process.env.CLOUDINARY_FOLDER || 'portfolio'
 
 const upload = multer({ 
   storage,
   fileFilter: function (req, file, cb) {
     // Accept images and PDFs for certificates
     const allowedTypes = /jpeg|jpg|png|gif|pdf|webp|avif/
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase())
     const mimetype = allowedTypes.test(file.mimetype)
     
-    if (mimetype && extname) {
+    if (mimetype) {
       return cb(null, true)
     } else {
       cb(new Error('Only images and PDF files are allowed'))
@@ -72,7 +64,12 @@ router.post('/', requireAuth, upload.single('certificate'), async (req, res) => 
     }
 
     // Handle certificate file upload
-    const certificateUrl = req.file ? `/uploads/${req.file.filename}` : null
+    const certificateUrl = req.file
+      ? await uploadBuffer(req.file.buffer, { 
+          folder: `${cloudFolder}/internships`,
+          resourceType: req.file.mimetype === 'application/pdf' ? 'raw' : 'image'
+        })
+      : null
 
     // Parse arrays if they come as JSON strings
     const parseArray = (field) => {
@@ -140,7 +137,12 @@ router.put('/:id', requireAuth, upload.single('certificate'), async (req, res) =
     } = req.body
 
     // Handle certificate file upload
-    const certificateUrl = req.file ? `/uploads/${req.file.filename}` : undefined
+    const certificateUrl = req.file
+      ? await uploadBuffer(req.file.buffer, { 
+          folder: `${cloudFolder}/internships`,
+          resourceType: req.file.mimetype === 'application/pdf' ? 'raw' : 'image'
+        })
+      : undefined
 
     // Parse arrays if they come as JSON strings
     const parseArray = (field) => {

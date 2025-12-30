@@ -1,23 +1,15 @@
 const express = require('express')
-const multer = require('multer')
-const path = require('path')
 const Certificate = require('../models/Certificate')
 const { requireAuth } = require('../middleware/auth')
+const multer = require('multer')
+const { uploadBuffer } = require('../utils/cloudinary')
 
 const router = express.Router()
 
-// Multer storage configuration
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '..', '..', 'uploads'))
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname)
-    cb(null, Date.now() + '-' + Math.round(Math.random() * 1e9) + ext)
-  }
-})
-
+// Multer storage configuration (memory + Cloudinary)
+const storage = multer.memoryStorage()
 const upload = multer({ storage })
+const cloudFolder = process.env.CLOUDINARY_FOLDER || 'portfolio'
 
 // Get all certificates
 router.get('/', async (req, res) => {
@@ -36,9 +28,9 @@ router.post('/', requireAuth, upload.single('image'), async (req, res) => {
       return res.status(400).json({ message: 'Certificate image is required' })
     }
 
-    const certificate = new Certificate({
-      image: `/uploads/${req.file.filename}`
-    })
+    const secureUrl = await uploadBuffer(req.file.buffer, { folder: `${cloudFolder}/certificates` })
+
+    const certificate = new Certificate({ image: secureUrl })
 
     await certificate.save()
     res.status(201).json(certificate)
@@ -53,7 +45,7 @@ router.put('/:id', requireAuth, upload.single('image'), async (req, res) => {
     const updateData = {}
     
     if (req.file) {
-      updateData.image = `/uploads/${req.file.filename}`
+      updateData.image = await uploadBuffer(req.file.buffer, { folder: `${cloudFolder}/certificates` })
     }
 
     const certificate = await Certificate.findByIdAndUpdate(
